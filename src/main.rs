@@ -8,8 +8,6 @@ use nix::sys::wait::waitpid;
 use std::ptr;
 use std::collections::HashMap;
 
-type Result<T> = std::result::Result<T, Box<std::error::Error>>;
-
 mod system_call_names;
 
 fn traceme() -> std::io::Result<(())> {
@@ -21,7 +19,8 @@ fn traceme() -> std::io::Result<(())> {
 }
 
 
-pub fn get_regs(pid: nix::unistd::Pid) -> user_regs_struct {
+pub fn get_regs(pid: nix::unistd::Pid) -> Result<user_regs_struct, nix::Error> {
+    // XXX : is it safe to drop regs if this fails?
     unsafe {
         let mut regs: user_regs_struct = mem::uninitialized();
 
@@ -32,15 +31,13 @@ pub fn get_regs(pid: nix::unistd::Pid) -> user_regs_struct {
             PT_NULL as *mut c_void,
             &mut regs as *mut _ as *mut c_void,
         );
-        match res {
-            Ok(_) => regs,
-            Err(e) => panic!("Get regs failed: {:?}", e),
-        }
+        // this
+        res.map(|_| regs)
     }
 }
 
 
-fn main() -> Result<()>{
+fn main() {
     let argv: Vec<_> = std::env::args().collect();
     let mut cmd = Command::new(&argv[1]);
     for arg in argv {
@@ -67,19 +64,27 @@ fn main() -> Result<()>{
     // println!("{}", regs.orig_rax);
     // println!("{}", system_call_names::SYSTEM_CALL_NAMES[(regs.orig_rax) as usize]);
     
+    /// Whether we are exiting (rather than entering) a syscall.
     let mut exit = true;
 
     loop {
-      let regs = get_regs(pid);
+      let regs = match get_regs(pid) {
+          Ok(x) => x,
+          Err(err) => {
+              eprintln!("Got error {:?}", err);
+              break;
+          }
+      };
       if exit {
         let mut syscallName = system_call_names::SYSTEM_CALL_NAMES[(regs.orig_rax) as usize];
-        // println!("{}", syscallName);
+        println!("{}", syscallName);
       
 
         match map.get(&syscallName) {
           Some(&number) => map.insert(syscallName, number+1),
           _ => map.insert(syscallName, 1),
         };
+
       
       }
        unsafe {
@@ -122,7 +127,4 @@ fn main() -> Result<()>{
     //     .expect("ls command failed to start");
 
     
-
-
-    Ok(())
 }
