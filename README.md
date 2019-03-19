@@ -1,2 +1,2 @@
 # rustrace
-Strace in Rust :mag
+Strace in Rust :mag:
