@@ -1,8 +1,7 @@
 # rustrace
 Strace in Rust :mag:
 
-``` strace is the system-call tracer, which traces the calls that a program makes into the kernel in order to interact with the outside world. 
-```
+> strace is the system-call tracer, which traces the calls that a program makes into the kernel in order to interact with the > outside world. 
 
 This code uses nix library which is platform dependent, hence there's a dockerfile which you can use to run this code!
 docker run -it --security-opt seccomp=unconfined <image_name>
