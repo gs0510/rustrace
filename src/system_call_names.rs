@@ -1,5 +1,3 @@
-
-
 pub static SYSTEM_CALL_NAMES: [&str; 332] = [
     "read",
     "write",
