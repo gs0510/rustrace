@@ -9,6 +9,6 @@ This code uses nix crate which is platform dependent, hence there's a dockerfile
 
 Since, ptrace(the syscall that strace implementation uses) allows you to look at and modify the registers of a program(which is pretty shady you'd need to disable seccomp mode.
 
-Inspired by [strace in C](https://blog.nelhage.com/2010/08/write-yourself-an-strace-in-70-lines-of-code/) and https://jvns.ca/strace-zine-unfolded.pdf
+Inspired by [strace in C](https://blog.nelhage.com/2010/08/write-yourself-an-strace-in-70-lines-of-code/) and by [Julia Evans' zine](https://jvns.ca/strace-zine-unfolded.pdf)
 
 Made at the Recurse Center :heart:
