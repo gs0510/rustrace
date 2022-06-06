@@ -5,5 +5,5 @@ authors = ["Gargi Sharma <gs051095@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-nix = "0.13.0"
+nix = "0.20.2"
 libc = "*"
